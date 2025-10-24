@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morita.hotel.mapper.RoomCategoryMapper">
+
+    <resultMap type="RoomCategory" id="RoomCategoryResult">
+        <result property="categoryId"    column="category_id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="image"    column="image"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectRoomCategoryVo">
+        select category_id, name, description, price, image, create_time from room_category
+    </sql>
+
+    <select id="selectRoomCategoryList" parameterType="RoomCategory" resultMap="RoomCategoryResult">
+        <include refid="selectRoomCategoryVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectRoomCategoryByCategoryId" parameterType="String" resultMap="RoomCategoryResult">
+        <include refid="selectRoomCategoryVo"/>
+        where category_id = #{categoryId}
+    </select>
+
+    <!--不分页查询房间类型列表-->
+    <select id="selectCategoryAllList" parameterType="RoomCategory" resultMap="RoomCategoryResult">
+        select category_id, name
+        from room_category
+    </select>
+
+    <!--根据房间分类名称查询房间分类ID-->
+    <select id="selectCategoryIdByName" resultType="java.lang.String">
+        select category_id
+        from room_category
+        where name = #{name}
+    </select>
+
+    <!--根据单个或多个房间名称批量查询分类ID-->
+    <select id="selectCategoryIdsByNames" resultType="java.util.Map">
+        select name, category_id
+        from room_category
+        where name in
+        <foreach collection="list" item="name" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </select>
+
+    <insert id="insertRoomCategory" parameterType="RoomCategory">
+        insert into room_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">category_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="price != null">price,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="price != null">#{price},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRoomCategory" parameterType="RoomCategory">
+        update room_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteRoomCategoryByCategoryId" parameterType="String">
+        delete from room_category where category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteRoomCategoryByCategoryIds" parameterType="String">
+        delete from room_category where category_id in
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+</mapper>

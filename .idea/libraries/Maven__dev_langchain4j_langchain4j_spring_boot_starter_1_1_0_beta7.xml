@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: dev.langchain4j:langchain4j-spring-boot-starter:1.1.0-beta7">
+    <CLASSES>
+      <root url="jar://D:/software/maven/local/dev/langchain4j/langchain4j-spring-boot-starter/1.1.0-beta7/langchain4j-spring-boot-starter-1.1.0-beta7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/software/maven/local/dev/langchain4j/langchain4j-spring-boot-starter/1.1.0-beta7/langchain4j-spring-boot-starter-1.1.0-beta7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/software/maven/local/dev/langchain4j/langchain4j-spring-boot-starter/1.1.0-beta7/langchain4j-spring-boot-starter-1.1.0-beta7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

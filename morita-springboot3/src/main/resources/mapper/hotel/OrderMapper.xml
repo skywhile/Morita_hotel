@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morita.hotel.mapper.OrderMapper">
+
+    <resultMap type="Order" id="OrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="checkInDate"    column="check_in_date"    />
+        <result property="checkOutDate"    column="check_out_date"    />
+        <result property="nights"    column="nights"    />
+        <result property="rooms"    column="rooms"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="image"    column="image"    />
+        <result property="userName"    column="user_name"    />
+    </resultMap>
+
+    <sql id="selectOrderVo">
+        select order_id, category_id, check_in_date, check_out_date, nights, rooms, unit_price, total_price, status, user_id, create_time from `order`
+    </sql>
+
+    <select id="selectOrderList" parameterType="Order" resultMap="OrderResult">
+        select o.order_id, o.category_id, o.check_in_date, o.check_out_date, o.nights,
+               o.rooms, o.unit_price, o.total_price, o.status, o.user_id, o.create_time,
+               rc.name, rc.description, rc.image,
+               u.user_name
+        from `order` o
+        left join room_category rc on o.category_id = rc.category_id
+        left join sys_user u on o.user_id = u.user_id
+        <where>
+            <if test="categoryId != null  and categoryId != ''"> and o.category_id = #{categoryId}</if>
+            <if test="status != null  and status != ''"> and o.status = #{status}</if>
+            <if test="userId != null "> and o.user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''">
+                and u.user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderByOrderId" parameterType="String" resultMap="OrderResult">
+        select o.order_id, o.category_id, o.check_in_date, o.check_out_date, o.nights,
+               o.rooms, o.unit_price, o.total_price, o.status, o.user_id, o.create_time,
+               rc.name, rc.description, rc.image,
+               u.user_name
+        from `order` o
+                 left join room_category rc on o.category_id = rc.category_id
+                 left join sys_user u on o.user_id = u.user_id
+        where order_id = #{orderId}
+    </select>
+
+    <insert id="insertOrder" parameterType="Order">
+        insert into `order`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="categoryId != null and categoryId != ''">category_id,</if>
+            <if test="checkInDate != null">check_in_date,</if>
+            <if test="checkOutDate != null">check_out_date,</if>
+            <if test="nights != null">nights,</if>
+            <if test="rooms != null">rooms,</if>
+            <if test="unitPrice != null">unit_price,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="categoryId != null and categoryId != ''">#{categoryId},</if>
+            <if test="checkInDate != null">#{checkInDate},</if>
+            <if test="checkOutDate != null">#{checkOutDate},</if>
+            <if test="nights != null">#{nights},</if>
+            <if test="rooms != null">#{rooms},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrder" parameterType="Order">
+        update `order`
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryId != null and categoryId != ''">category_id = #{categoryId},</if>
+            <if test="checkInDate != null">check_in_date = #{checkInDate},</if>
+            <if test="checkOutDate != null">check_out_date = #{checkOutDate},</if>
+            <if test="nights != null">nights = #{nights},</if>
+            <if test="rooms != null">rooms = #{rooms},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteOrderByOrderId" parameterType="String">
+        delete from `order` where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteOrderByOrderIds" parameterType="String">
+        delete from `order` where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+</mapper>

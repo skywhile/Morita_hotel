@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morita.hotel.mapper.CheckoutMapper">
+    
+    <resultMap type="Checkout" id="CheckoutResult">
+        <result property="checkoutId"    column="checkOut_id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCheckoutVo">
+        select checkOut_id, order_id, create_time from checkout
+    </sql>
+
+    <select id="selectCheckoutList" parameterType="Checkout" resultMap="CheckoutResult">
+        <include refid="selectCheckoutVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCheckoutByCheckoutId" parameterType="String" resultMap="CheckoutResult">
+        <include refid="selectCheckoutVo"/>
+        where checkOut_id = #{checkoutId}
+    </select>
+
+    <insert id="insertCheckout" parameterType="Checkout">
+        insert into checkout
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="checkoutId != null">checkOut_id,</if>
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="checkoutId != null">#{checkoutId},</if>
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCheckout" parameterType="Checkout">
+        update checkout
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where checkOut_id = #{checkoutId}
+    </update>
+
+    <delete id="deleteCheckoutByCheckoutId" parameterType="String">
+        delete from checkout where checkOut_id = #{checkoutId}
+    </delete>
+
+    <delete id="deleteCheckoutByCheckoutIds" parameterType="String">
+        delete from checkout where checkOut_id in 
+        <foreach item="checkoutId" collection="array" open="(" separator="," close=")">
+            #{checkoutId}
+        </foreach>
+    </delete>
+</mapper>
